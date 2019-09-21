@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class FourFrames : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class FourFrames : MonoBehaviour
     [SerializeField]
     SpriteRenderer ketsuFrameViews = null;
 
+    [SerializeField]
+    Sprite blackFrame = null;
+
     List<FrameID> frameIDs = new List<FrameID>(4);
 
     public void AddFrame(FrameID frameID)
@@ -25,32 +29,40 @@ public class FourFrames : MonoBehaviour
             case SituationID.Ki:
                 if (kiFrameViews.sprite == null)
                 {
-                    kiFrameViews.sprite = frameRepository.GetFrameView(frameID);
+                    kiFrameViews.sprite = blackFrame;
                     frameIDs[0] = frameID;
                 }
                 break;
             case SituationID.Sho:
                 if (shoFrameViews.sprite == null)
                 {
-                    shoFrameViews.sprite = frameRepository.GetFrameView(frameID);
+                    shoFrameViews.sprite = blackFrame;
                     frameIDs[1] = frameID;
                 }
                 break;
             case SituationID.Ten:
                 if (tenFrameViews.sprite == null)
                 {
-                    tenFrameViews.sprite = frameRepository.GetFrameView(frameID);
+                    tenFrameViews.sprite = blackFrame;
                     frameIDs[2] = frameID;
                 }
                 break;
             case SituationID.Ketsu:
                 if (ketsuFrameViews.sprite == null)
                 {
-                    ketsuFrameViews.sprite = frameRepository.GetFrameView(frameID);
+                    ketsuFrameViews.sprite = blackFrame;
                     frameIDs[3] = frameID;
                 }
                 break;
         }
+    }
+
+    public void DisplayFrame()
+    {
+        kiFrameViews.sprite = frameRepository.GetFrameView(frameIDs[0]);
+        shoFrameViews.sprite = frameRepository.GetFrameView(frameIDs[1]);
+        tenFrameViews.sprite = frameRepository.GetFrameView(frameIDs[2]);
+        ketsuFrameViews.sprite = frameRepository.GetFrameView(frameIDs[3]);
     }
 
     public void ResetFrames()
@@ -60,5 +72,10 @@ public class FourFrames : MonoBehaviour
         shoFrameViews.sprite = null;
         tenFrameViews.sprite = null;
         ketsuFrameViews.sprite = null;
+    }
+
+    public IEnumerable<FrameID> GetFrameIDs()
+    {
+        return frameIDs;
     }
 }
