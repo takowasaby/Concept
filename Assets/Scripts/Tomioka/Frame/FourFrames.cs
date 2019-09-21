@@ -5,16 +5,16 @@ using UnityEngine;
 public class FourFrames : MonoBehaviour
 {
     [SerializeField]
-    FrameRepository frameRepository;
+    FrameRepository frameRepository = null;
 
     [SerializeField]
-    SpriteRenderer kiFrameViews;
+    SpriteRenderer kiFrameViews = null;
     [SerializeField]
-    SpriteRenderer shoFrameViews;
+    SpriteRenderer shoFrameViews = null;
     [SerializeField]
-    SpriteRenderer tenFrameViews;
+    SpriteRenderer tenFrameViews = null;
     [SerializeField]
-    SpriteRenderer ketsuFrameViews;
+    SpriteRenderer ketsuFrameViews = null;
 
     List<FrameID> frameIDs = new List<FrameID>(4);
 
@@ -61,6 +61,4 @@ public class FourFrames : MonoBehaviour
         tenFrameViews.sprite = null;
         ketsuFrameViews.sprite = null;
     }
-
-    public 
 }
