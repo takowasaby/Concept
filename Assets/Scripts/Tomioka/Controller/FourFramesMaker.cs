@@ -29,6 +29,28 @@ public class FourFramesMaker : MonoBehaviour
     private PlayerID displayPlayerID = PlayerID.First;
     private System.Action<IEnumerable<FrameID>> onFinishCallBack = null;
 
+    private void Update()
+    {
+        GlobalHand.Reset();
+        foreach (PlayerID playerID in System.Enum.GetValues(typeof(PlayerID)))
+        {
+            GlobalHand.SetHand(playerID, SituationID.Ki, FrameID.GoForward);
+            GlobalHand.SetHand(playerID, SituationID.Sho, FrameID.AccumulatePower);
+            GlobalHand.SetHand(playerID, SituationID.Ten, FrameID.RaiseSword);
+            GlobalHand.SetHand(playerID, SituationID.Ketsu, FrameID.CutDown);
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            this.InitializeFourFramesMaker(PlayerID.First, (IEnumerable<FrameID> ids) =>
+            {
+                foreach (var id in ids)
+                {
+                    Debug.Log(id);
+                }
+            });
+        }
+    }
+
     public void InitializeFourFramesMaker(PlayerID firstPlayer, System.Action<IEnumerable<FrameID>> onFinishCallBack)
     {
         choosenFrameSituation = new List<SituationID>();
@@ -49,14 +71,22 @@ public class FourFramesMaker : MonoBehaviour
         DisplayHand();
     }
 
+    public void OnShiftHandRight()
+    {
+        displayPlayerID = PlayerIDOffset(displayPlayerID, -1);
+        hand.UpdateFrames(GlobalHand.GetHand(displayPlayerID));
+        DisplayHand();
+    }
+
     public void OnChoiseFrame(SituationID situationID)
     {
         choosenFrameSituation.Add(situationID);
         FrameID frameID = GlobalHand.GetHand(currentPlayerID, situationID);
         fourFrames.AddFrame(frameID);
-        if (choosenFrameSituation.Count == 4)
+        if (choosenFrameSituation.Count >= 4)
         {
             FinalizeFourFramesMaker();
+            return;
         }
         currentPlayerID = PlayerIDOffset(currentPlayerID, 1);
         displayPlayerID = currentPlayerID;
@@ -83,6 +113,7 @@ public class FourFramesMaker : MonoBehaviour
     {
         handShifterLeft.interactable = false;
         handShifterRight.interactable = false;
+        hand.DisableFrames();
         hand.ResetFrames();
         choosenFrameSituation = new List<SituationID>();
         StartCoroutine("FinalizeAct");
@@ -90,7 +121,7 @@ public class FourFramesMaker : MonoBehaviour
 
     private PlayerID PlayerIDOffset(PlayerID playerID, int offset)
     {
-        return (PlayerID)(((int)playerID + offset) % 4);
+        return (PlayerID)(((int)playerID + offset + 4) % 4);
     }
 
     private IEnumerator WaitTap(string message)

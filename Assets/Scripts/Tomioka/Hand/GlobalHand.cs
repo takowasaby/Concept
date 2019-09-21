@@ -11,7 +11,6 @@ public class GlobalHand
 
     private GlobalHand()
     {
-        Reset();
     }
 
     public static void Reset()

@@ -20,7 +20,7 @@ public class FourFrames : MonoBehaviour
     [SerializeField]
     Sprite blackFrame = null;
 
-    List<FrameID> frameIDs = new List<FrameID>(4);
+    List<FrameID> frameIDs = new List<FrameID>() { FrameID.NullFrame, FrameID.NullFrame, FrameID.NullFrame, FrameID.NullFrame };
 
     public void AddFrame(FrameID frameID)
     {
@@ -67,7 +67,7 @@ public class FourFrames : MonoBehaviour
 
     public void ResetFrames()
     {
-        frameIDs = new List<FrameID>(4);
+        List<FrameID> frameIDs = new List<FrameID>() { FrameID.NullFrame, FrameID.NullFrame, FrameID.NullFrame, FrameID.NullFrame };
         kiFrameViews.sprite = null;
         shoFrameViews.sprite = null;
         tenFrameViews.sprite = null;
