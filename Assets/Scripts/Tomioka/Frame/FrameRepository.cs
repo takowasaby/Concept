@@ -35,7 +35,7 @@ public class FrameRepository : MonoBehaviour
         }
     }
 
-    public Sprite GenerateFrameView(FrameID frameID)
+    public Sprite GetFrameView(FrameID frameID)
     {
         foreach (FrameInfo frameInfo in frameInfos)
         {
