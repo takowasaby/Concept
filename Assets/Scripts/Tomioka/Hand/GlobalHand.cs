@@ -32,6 +32,11 @@ public class GlobalHand
         globalHandIDs[playerID][situationID] = frameID;
     }
 
+    public static FrameID GetHand(PlayerID playerID, SituationID situationID)
+    {
+        return globalHandIDs[playerID][situationID];
+    }
+
     public static IEnumerable<FrameID> GetHand(PlayerID playerID)
     {
         return globalHandIDs[playerID].Select(pair => pair.Value);

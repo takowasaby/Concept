@@ -15,13 +15,11 @@ public class Hand : MonoBehaviour
     [SerializeField]
     List<Image> frameImages = new List<Image>();
 
-    private void Update()
-    {
-        DisableFrames();
-    }
+    System.Action<SituationID> onChoiseButtonCallBack = null;
 
     public void UpdateFrames(IEnumerable<FrameID> frameIDs)
     {
+        ResetFrames();
         List<FrameID> idList = frameIDs.ToList();
         for (int i = 0; i < frameImages.Count && i < idList.Count; i++)
         {
@@ -41,8 +39,9 @@ public class Hand : MonoBehaviour
         }
     }
 
-    public void EnableFrames()
+    public void EnableFrames(System.Action<SituationID> onChoiseButtonCallBack)
     {
+        this.onChoiseButtonCallBack = onChoiseButtonCallBack;
         foreach(var frameButton in frameButtons)
         {
             frameButton.interactable = true;
@@ -55,5 +54,30 @@ public class Hand : MonoBehaviour
         {
             frameButton.interactable = false;
         }
+    }
+
+    public void DisableOneFrames(SituationID situationID)
+    {
+        frameButtons[(int)situationID].interactable = false;
+    }
+
+    public void OnChoiseKiFrame()
+    {
+        onChoiseButtonCallBack(SituationID.Ki);
+    }
+
+    public void OnChoiseShoFrame()
+    {
+        onChoiseButtonCallBack(SituationID.Sho);
+    }
+
+    public void OnChoiseTenFrame()
+    {
+        onChoiseButtonCallBack(SituationID.Ten);
+    }
+
+    public void OnChoiseKetsuFrame()
+    {
+        onChoiseButtonCallBack(SituationID.Ketsu);
     }
 }
