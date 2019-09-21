@@ -4,6 +4,7 @@ using UnityEngine;
 
 public enum FrameID
 {
+    NullFrame,
     GoForward,
     GoBack,
     AccumulatePower,
