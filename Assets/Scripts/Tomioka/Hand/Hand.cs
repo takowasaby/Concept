@@ -29,7 +29,7 @@ public class Hand : MonoBehaviour
             {
                 continue;
             }
-            frameImages[i].sprite = frameRepository.GetFrameView(idList[i]);
+            frameImages[i].sprite = frameRepository.GetFrameHandView(idList[i]);
         }
     }
 
