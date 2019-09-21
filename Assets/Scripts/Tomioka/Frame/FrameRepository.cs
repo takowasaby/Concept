@@ -11,7 +11,7 @@ public class FrameRepository : MonoBehaviour
     List<SituationID> situationIDs = new List<SituationID>();
 
     [SerializeField]
-    List<GameObject> frameViewPrefabs = new List<GameObject>();
+    List<Sprite> frameViews = new List<Sprite>();
 
     List<FrameInfo> frameInfos = new List<FrameInfo>();
 
@@ -19,29 +19,29 @@ public class FrameRepository : MonoBehaviour
     {
         public FrameID frameID;
         public SituationID situationID;
-        public GameObject frameViewPrefab;
+        public Sprite frameView;
     }
 
     void Start()
     {
         frameInfos.Clear();
-        for (int i = 0; i < frameIDs.Count && i < situationIDs.Count && i < frameViewPrefabs.Count; i++)
+        for (int i = 0; i < frameIDs.Count && i < situationIDs.Count && i < frameViews.Count; i++)
         {
             FrameInfo frameInfo = new FrameInfo();
             frameInfo.frameID = frameIDs[i];
             frameInfo.situationID = situationIDs[i];
-            frameInfo.frameViewPrefab = frameViewPrefabs[i];
+            frameInfo.frameView = frameViews[i];
             frameInfos.Add(frameInfo);
         }
     }
 
-    public GameObject GenerateFrameView(FrameID frameID, Vector3 position, Quaternion rotation, Transform parent)
+    public Sprite GenerateFrameView(FrameID frameID)
     {
         foreach (FrameInfo frameInfo in frameInfos)
         {
             if (frameInfo.frameID == frameID)
             {
-                return Instantiate(frameInfo.frameViewPrefab, position, rotation, parent);
+                return frameInfo.frameView;
             }
         }
         throw new System.Exception("無効なFrameIDが入力されました。");
