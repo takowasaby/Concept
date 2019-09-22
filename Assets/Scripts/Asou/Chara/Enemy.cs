@@ -25,5 +25,12 @@ public class Enemy : Character
     public new void Awake()
     {
         base.Awake();
+        _isAlly = false;
+    }
+
+    public List<int> GetFrameList(int id)
+    {
+        id = id % _preset.Count;
+        return _preset[id].List;
     }
 }
