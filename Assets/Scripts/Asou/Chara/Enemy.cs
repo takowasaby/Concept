@@ -28,6 +28,8 @@ public class Enemy : Character
         _isAlly = false;
     }
 
+    public int GetFrameListSize() { return _preset.Count; }
+
     public List<FrameID> GetFrameList(int id)
     {
         id = id % _preset.Count;
