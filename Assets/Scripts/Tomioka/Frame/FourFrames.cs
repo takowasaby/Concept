@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.UI;
 
 public class FourFrames : MonoBehaviour
 {
@@ -9,13 +10,13 @@ public class FourFrames : MonoBehaviour
     FrameRepository frameRepository = null;
 
     [SerializeField]
-    SpriteRenderer kiFrameViews = null;
+    Image kiFrameViews = null;
     [SerializeField]
-    SpriteRenderer shoFrameViews = null;
+    Image shoFrameViews = null;
     [SerializeField]
-    SpriteRenderer tenFrameViews = null;
+    Image tenFrameViews = null;
     [SerializeField]
-    SpriteRenderer ketsuFrameViews = null;
+    Image ketsuFrameViews = null;
 
     [SerializeField]
     Sprite blackFrame = null;
