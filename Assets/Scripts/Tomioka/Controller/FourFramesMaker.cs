@@ -29,28 +29,6 @@ public class FourFramesMaker : MonoBehaviour
     private PlayerID displayPlayerID = PlayerID.First;
     private System.Action<IEnumerable<FrameID>> onFinishCallBack = null;
 
-    private void Update()
-    {
-        GlobalHand.Reset();
-        foreach (PlayerID playerID in System.Enum.GetValues(typeof(PlayerID)))
-        {
-            GlobalHand.SetHand(playerID, SituationID.Ki, FrameID.GoForward);
-            GlobalHand.SetHand(playerID, SituationID.Sho, FrameID.AccumulatePower);
-            GlobalHand.SetHand(playerID, SituationID.Ten, FrameID.RaiseSword);
-            GlobalHand.SetHand(playerID, SituationID.Ketsu, FrameID.CutDown);
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-            this.InitializeFourFramesMaker(PlayerID.First, (IEnumerable<FrameID> ids) =>
-            {
-                foreach (var id in ids)
-                {
-                    Debug.Log(id);
-                }
-            });
-        }
-    }
-
     public void InitializeFourFramesMaker(PlayerID firstPlayer, System.Action<IEnumerable<FrameID>> onFinishCallBack)
     {
         choosenFrameSituation = new List<SituationID>();
