@@ -7,10 +7,6 @@ public class EnemyFourFramesMaker : MonoBehaviour
     [SerializeField]
     FourFrames fourFrames = null;
 
-
-    [SerializeField]
-    Character hogeEnemy = null;
-
     public void InitializeFourFramesMaker(Character enemy, System.Action<IEnumerable<FrameID>> onFinishCallBack)
     {
         fourFrames.gameObject.SetActive(true);
