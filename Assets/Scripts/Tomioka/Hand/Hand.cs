@@ -36,6 +36,7 @@ public class Hand : MonoBehaviour
         foreach(var frameImage in frameImages)
         {
             frameImage.sprite = null;
+            frameImage.gameObject.SetActive(false);
         }
     }
 
@@ -44,6 +45,10 @@ public class Hand : MonoBehaviour
         this.onChoiseButtonCallBack = onChoiseButtonCallBack;
         foreach(var frameButton in frameButtons)
         {
+            if (!frameButton.gameObject.active)
+            {
+                frameButton.gameObject.SetActive(true);
+            }
             frameButton.interactable = true;
         }
     }

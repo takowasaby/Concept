@@ -172,6 +172,8 @@ public class FourFramesMaker : MonoBehaviour
 
         yield return new WaitForSeconds(2.0f);
 
+        fourFrames.ResetFrames();
+        fourFrames.gameObject.SetActive(false);
         onFinishCallBack(fourFrames.GetFrameIDs());
     }
 }
