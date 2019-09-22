@@ -6,19 +6,19 @@ using UnityEngine.Events;
 
 public class Action : MonoBehaviour
 {
-    public IEnumerator ActionFrameList(int characterID, List<int> frameList, UnityAction callback)
+    public IEnumerator ActionFrameList(int characterID, List<FrameID> frameList, UnityAction callback)
     {
-        foreach (int frameID in frameList)
+        foreach (FrameID frameID in frameList)
         {
             switch (frameID)
             {
-                case 0:
+                case FrameID.GoForward:
                     if (CheckMovable(characterID, true))
-                        yield return CharacterManager.characters[characterID].Move(true);
+                        yield return Character.characters[characterID].Move(true);
                     break;
-                case 1:
+                case FrameID.GoBack:
                     if (CheckMovable(characterID, false))
-                        yield return CharacterManager.characters[characterID].Move(false);
+                        yield return Character.characters[characterID].Move(false);
                     break;
                 default:
                     break;
@@ -30,19 +30,21 @@ public class Action : MonoBehaviour
 
     private bool CheckMovable(int characterID, bool forward)
     {
-        int allyX = CharacterManager.characters[characterID].GetX();
-        float allyY = CharacterManager.characters[characterID].GetY();
+        int allyX = Character.characters[characterID].GetX();
+        float allyY = Character.characters[characterID].GetY();
 
         if (forward && allyY == 3) return false;
         else if (!forward && allyY == 0) return false;
 
+        /*
         int vec = forward ? 1 : -1;
 
-        foreach (Character character in CharacterManager.characters)
+        foreach (Character character in Character.characters)
         {
             if (allyX == character.GetX() && Math.Abs(allyY + vec - character.GetY()) < 0.001)
                 return false;
         }
+        */
 
         return true;
     }

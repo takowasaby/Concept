@@ -19,11 +19,16 @@ public class Character : MonoBehaviour
     public static List<Character> characters;
 
     protected bool _isAlly; // 味方かどうか
+
+    private int _id;
     private int _remainHp;
 
     public void Awake()
     {
         _isAlly = true;
+
+        _id = characters.Count;
+        characters.Add(this);
         _remainHp = _hp;
     }
 
@@ -48,12 +53,9 @@ public class Character : MonoBehaviour
 
     private void PutScreen()
     {
-        Vector2 endPoint = new Vector2(500, 100);
-
-
         Vector2 pos = transform.localPosition;
-        pos.x = _x;
-        pos.y = _y;
+        pos.x = 200 + _x * 150;
+        pos.y = 200 + _y * 300;
         transform.localPosition = pos;
     }
 

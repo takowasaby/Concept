@@ -10,9 +10,9 @@ public class Enemy : Character
     [System.SerializableAttribute]
     public class ValueList
     {
-        public List<int> List = new List<int>();
+        public List<FrameID> List = new List<FrameID>();
 
-        public ValueList(List<int> list)
+        public ValueList(List<FrameID> list)
         {
             List = list;
         }
@@ -28,7 +28,7 @@ public class Enemy : Character
         _isAlly = false;
     }
 
-    public List<int> GetFrameList(int id)
+    public List<FrameID> GetFrameList(int id)
     {
         id = id % _preset.Count;
         return _preset[id].List;
