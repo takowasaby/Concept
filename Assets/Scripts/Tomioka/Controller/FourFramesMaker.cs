@@ -13,53 +13,31 @@ public class FourFramesMaker : MonoBehaviour
     Hand hand = null;
 
     [SerializeField]
-    Button handShifterLeft = null;
-
-    [SerializeField]
-    Button handShifterRight = null;
-
-    [SerializeField]
     GameObject waitTapWindow = null;
 
     [SerializeField]
     Text waitWindowText = null;
 
-    private List<SituationID> choosenFrameSituation = new List<SituationID>();
+    private List<int> choosenFrameSituation = new List<int>();
     private PlayerID currentPlayerID = PlayerID.First;
     private PlayerID displayPlayerID = PlayerID.First;
     private System.Action<IEnumerable<FrameID>> onFinishCallBack = null;
 
     public void InitializeFourFramesMaker(PlayerID firstPlayer, System.Action<IEnumerable<FrameID>> onFinishCallBack)
     {
-        choosenFrameSituation = new List<SituationID>();
+        choosenFrameSituation = new List<int>();
         this.currentPlayerID = firstPlayer;
         this.displayPlayerID = firstPlayer;
         this.onFinishCallBack = onFinishCallBack;
         hand.UpdateFrames(GlobalHand.GetHand(displayPlayerID));
         fourFrames.gameObject.SetActive(true);
         DisplayHand();
-        handShifterLeft.interactable = true;
-        handShifterRight.interactable = true;
     }
 
-    public void OnShiftHandLeft()
+    public void OnChoiseFrame(int handIndex)
     {
-        displayPlayerID = PlayerIDOffset(displayPlayerID, 1);
-        hand.UpdateFrames(GlobalHand.GetHand(displayPlayerID));
-        DisplayHand();
-    }
-
-    public void OnShiftHandRight()
-    {
-        displayPlayerID = PlayerIDOffset(displayPlayerID, -1);
-        hand.UpdateFrames(GlobalHand.GetHand(displayPlayerID));
-        DisplayHand();
-    }
-
-    public void OnChoiseFrame(SituationID situationID)
-    {
-        choosenFrameSituation.Add(situationID);
-        FrameID frameID = GlobalHand.GetHand(currentPlayerID, situationID);
+        choosenFrameSituation.Add(handIndex);
+        FrameID frameID = GlobalHand.GetHand(currentPlayerID, handIndex);
         fourFrames.AddFrame(frameID);
         if (choosenFrameSituation.Count >= 4)
         {
@@ -73,13 +51,10 @@ public class FourFramesMaker : MonoBehaviour
 
     private void DisplayHand()
     {
+        hand.UpdateFrames(GlobalHand.GetHand(displayPlayerID));
         if (displayPlayerID == currentPlayerID)
         {
             hand.EnableFrames(OnChoiseFrame);
-            foreach (var situation in choosenFrameSituation)
-            {
-                hand.DisableOneFrames(situation);
-            }
         }
         else
         {
@@ -89,11 +64,9 @@ public class FourFramesMaker : MonoBehaviour
 
     private void FinalizeFourFramesMaker()
     {
-        handShifterLeft.interactable = false;
-        handShifterRight.interactable = false;
         hand.DisableFrames();
         hand.ResetFrames();
-        choosenFrameSituation = new List<SituationID>();
+        choosenFrameSituation = new List<int>();
         StartCoroutine("FinalizeAct");
     }
 
@@ -105,12 +78,6 @@ public class FourFramesMaker : MonoBehaviour
     private IEnumerator WaitTap(string message)
     {
         hand.DisableFrames();
-
-        bool leftCache = handShifterLeft.interactable;
-        bool rightCache = handShifterRight.interactable;
-
-        handShifterLeft.interactable = false;
-        handShifterRight.interactable = false;
 
         waitTapWindow.SetActive(true);
         waitWindowText.text = message;
@@ -124,9 +91,6 @@ public class FourFramesMaker : MonoBehaviour
 
         waitWindowText.text = "";
         waitTapWindow.SetActive(false);
-
-        handShifterLeft.interactable = leftCache;
-        handShifterRight.interactable = rightCache;
 
         DisplayHand();
     }

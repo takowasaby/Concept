@@ -6,7 +6,7 @@ using System.Linq;
 public class SpeedJudge : MonoBehaviour
 {
     private List<Character> charactersInBattle;
-    private int currentCharacter = 0;
+    private int currentCharacter;
 
     public void UpdateOrder(IEnumerable<Character> characters)
     {
@@ -18,6 +18,8 @@ public class SpeedJudge : MonoBehaviour
 
     public Character Next()
     {
-        return charactersInBattle[currentCharacter];
+        Character next = charactersInBattle[currentCharacter];
+        currentCharacter = (currentCharacter + 1) % charactersInBattle.Count;
+        return next;
     }
 }
