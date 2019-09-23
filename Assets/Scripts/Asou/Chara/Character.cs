@@ -15,14 +15,21 @@ public class Character : MonoBehaviour
     [SerializeField]
     private int _def;
     [SerializeField]
-    private int _x;
+    private float _x;
     [SerializeField]
     private float _y;
     [SerializeField]
     private int _spd;
+    [SerializeField]
+    private int _heal;
+
+    [SerializeField]
+    private bool _test;
 
     [SerializeField]
     private RectTransform HpBarRTF;
+    [SerializeField]
+    private GameObject buffImage;
 
     public static List<Character> characters;
 
@@ -30,6 +37,7 @@ public class Character : MonoBehaviour
 
     private int _id;
     private int _remainHp;
+    private bool _buff;
 
     /// <summary>
     /// アニメ関係
@@ -48,19 +56,23 @@ public class Character : MonoBehaviour
 
     private static List<string> _headerList = new List<string>
     {
-        "Animation/stay/stay_",
-        "Animation/walk/back/walk_"
+        "Animation/stay/stay_00",
+        "Animation/walk/back/walk_00",
+        "Animation/walk/front/walk_00",
+        "Animation/attack/attack_"
     };
 
     private static List<int> _maxList = new List<int>
     {
+        30,
+        30,
         30,
         30
     };
 
     [SerializeField]
     private float _interval;
-
+    [SerializeField]
     private Image _image;
 
     private float _passTime;
@@ -80,6 +92,7 @@ public class Character : MonoBehaviour
         _id = characters.Count;
         characters.Add(this);
         _remainHp = _hp;
+        _buff = false;
 
         UpdateHpBar();
 
@@ -90,8 +103,8 @@ public class Character : MonoBehaviour
             for (int i = 1; i <= _maxList[headerIdx]; i++)
             {
                 string numberString;
-                if (i < 10) numberString = "000" + i;
-                else numberString = "00" + i;
+                if (i < 10) numberString = "0" + i;
+                else numberString = i.ToString();
                 spriteList.Add(
                     (Sprite)Resources.Load<Sprite>(header + numberString)
                 );
@@ -102,11 +115,15 @@ public class Character : MonoBehaviour
 
             headerIdx++;
         }
-
-        _image = gameObject.GetComponent<Image>();
+        
         _passTime = 0f;
         _counter = 0;
         _status = AnimationID.stay;
+    }
+
+    void Start()
+    {
+        ChangeSize();
     }
 
     void Update()
@@ -125,8 +142,8 @@ public class Character : MonoBehaviour
                 _counter = 0;
             }
         }
-
-        if (_isAlly && Input.GetMouseButtonDown(2))
+        
+        if (_test && _isAlly && Input.GetMouseButtonDown(2))
         {
             StartCoroutine(TestMove());
         }
@@ -134,20 +151,35 @@ public class Character : MonoBehaviour
 
     void OnValidate()
     {
-        Vector2 pos = transform.localPosition;
-        pos.x = _x;
-        pos.y = _y;
-        transform.localPosition = pos;
+        ChangePos();
+        ChangeSize();
+    }
+
+    private void ChangePos()
+    {
+        transform.localPosition = new Vector2(_x, _y);
+    }
+
+    private void ChangeSize()
+    {
+        float size = 210000 / _y + 400;
+        if (!_isAlly)
+        {
+            size *= 1.3f;
+        }
+        transform.GetComponent<RectTransform>().sizeDelta = new Vector2(size, size);
     }
 
     // テスト用
     private IEnumerator TestMove()
     {
-        ChangeStatus(AnimationID.walk);
+        ChangeStatus(AnimationID.backWalk);
         yield return Move(new Vector2(0, 800), 0.6f);
         ChangeStatus(AnimationID.stay);
         yield return new WaitForSeconds(0.3f);
+        ChangeStatus(AnimationID.frontWalk);
         yield return Move(new Vector2(0, -800), 0.3f);
+        ChangeStatus(AnimationID.stay);
     }
 
     public void ChangeStatus(AnimationID status)
@@ -161,10 +193,17 @@ public class Character : MonoBehaviour
     public int GetHp() { return _hp; }
     public int GetAtk() { return _atk; }
     public int GetDef() { return _def; }
-    public int GetX() { return _x; }
+    public float GetX() { return _x; }
     public float GetY() { return _y; }
     public int GetSpd() { return _spd; }
     public int GetRemainHp() { return _remainHp; }
+    public bool GetBuff() { return _buff; }
+
+    public void SetBuff()
+    {
+        _buff = true;
+        buffImage.SetActive(true);
+    }
 
     private void UpdateHpBar()
     {
@@ -176,7 +215,7 @@ public class Character : MonoBehaviour
     public bool TakeDamage(int damage)
     {
         _remainHp -= damage;
-        Debug.Log(damage + "ダメージ");
+        //Debug.Log(damage + "ダメージ");
 
         if (_remainHp < 0)
         {
@@ -190,6 +229,16 @@ public class Character : MonoBehaviour
         return false;
     }
 
+    public void HealHp()
+    {
+        _remainHp += _heal;
+        if (_remainHp > _hp)
+        {
+            _remainHp = _hp;
+        }
+        UpdateHpBar();
+    }
+
     public IEnumerator Move(Vector2 dist, float time)
     {
         Vector2 startPos = transform.localPosition;
@@ -198,15 +247,17 @@ public class Character : MonoBehaviour
         while (passTime < time)
         {
             passTime += Time.deltaTime;
-            transform.localPosition = new Vector2(
-                startPos.x + dist.x * passTime / time,
-                startPos.y + dist.y * passTime / time
-            );
+
+            _x = (int)(startPos.x + dist.x * passTime / time);
+            _y = (int)(startPos.y + dist.y * passTime / time);
+            ChangePos();
+            ChangeSize();
             yield return null;
         }
-        transform.localPosition = new Vector2(
-            startPos.x + dist.x,
-            startPos.y + dist.y
-        );
+
+        _x = (int)(startPos.x + dist.x);
+        _y = (int)(startPos.y + dist.y);
+        ChangePos();
+        ChangeSize();
     }
 }

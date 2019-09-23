@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class EffectMaker : MonoBehaviour
 {
-    [SerializeField]
     public static EffectMaker instance;
 
     [SerializeField]
@@ -22,6 +21,8 @@ public class EffectMaker : MonoBehaviour
     private List<ValueList> _imageList = new List<ValueList>();
 
     // 確認用
+    [SerializeField]
+    private bool _test;
     [SerializeField]
     private EffectID _effectID;
     [SerializeField]
@@ -77,18 +78,19 @@ public class EffectMaker : MonoBehaviour
         effectScript.SetMax(imageList.Count);
         effectScript.SetLoop(loop);
 
-        Debug.Log(pos);
-
         effect.transform.SetParent(_parentGameObject.transform);
     }
 
     // エフェクトの確認用
     void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (_test)
         {
-            Vector2 mousePos = Input.mousePosition;
-            Make(_effectID, mousePos, _size, _interval, _loop);
+            if (Input.GetMouseButtonDown(1))
+            {
+                Vector2 mousePos = Input.mousePosition;
+                Make(_effectID, mousePos, _size, _interval, _loop);
+            }
         }
     }
 }

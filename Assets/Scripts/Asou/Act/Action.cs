@@ -11,6 +11,8 @@ public class Action : MonoBehaviour
 
     // 確認用
     [SerializeField]
+    private bool _test;
+    [SerializeField]
     private bool _testAlly;
     [SerializeField]
     private FramesRoleID _framesRoleID;
@@ -31,20 +33,23 @@ public class Action : MonoBehaviour
     // アニメーションの確認用
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (_test)
         {
-            if (!_testAlly)
+            if (Input.GetMouseButtonDown(0))
             {
-                CallEnemy(null);
-            }
-            else
-            {
-                CallAlly(_framesRoleID, _setIndex, null);
+                if (!_testAlly)
+                {
+                    CallEnemy(null);
+                }
+                else
+                {
+                    CallAlly(_framesRoleID, _setIndex, null);
+                }
             }
         }
     }
 
-    public void CallAlly(FramesRoleID framesRoleID, int setIndex, UnityAction callback)
+    public void CallAlly(FramesRoleID framesRoleID, int setIndex, UnityAction<string> callback)
     {
         switch (framesRoleID)
         {
@@ -52,13 +57,13 @@ public class Action : MonoBehaviour
                 switch (setIndex)
                 {
                     case 0:
-                        StartCoroutine(Attack());
+                        StartCoroutine(Attack(callback));
                         break;
                     case 1:
-                        StartCoroutine(Talk());
+                        StartCoroutine(Talk(callback));
                         break;
                     case 2:
-                        StartCoroutine(Attack());
+                        StartCoroutine(Attack(callback));
                         break;
                     default:
                         break;
@@ -68,13 +73,13 @@ public class Action : MonoBehaviour
                 switch (setIndex)
                 {
                     case 0:
-                        StartCoroutine(Buff());
+                        StartCoroutine(Buff(callback));
                         break;
                     case 1:
-                        StartCoroutine(Buff());
+                        StartCoroutine(Buff(callback));
                         break;
                     case 2:
-                        StartCoroutine(Buff());
+                        StartCoroutine(Buff(callback));
                         break;
                     default:
                         break;
@@ -84,13 +89,13 @@ public class Action : MonoBehaviour
                 switch (setIndex)
                 {
                     case 0:
-                        StartCoroutine(Heal());
+                        StartCoroutine(Heal(callback));
                         break;
                     case 1:
-                        StartCoroutine(Heal());
+                        StartCoroutine(Heal(callback));
                         break;
                     case 2:
-                        StartCoroutine(Heal());
+                        StartCoroutine(Heal(callback));
                         break;
                     default:
                         break;
@@ -99,42 +104,65 @@ public class Action : MonoBehaviour
            default:
                 break;
         }
-
-        if (callback != null) callback();
     }
 
-    public IEnumerator Attack()
+    public IEnumerator Attack(UnityAction<string> callback)
     {
-        _ally.ChangeStatus(AnimationID.walk);
-        yield return _ally.Move(new Vector2(0, 700), 0.6f);
+        SE.instance.Play(SEID.serihukougeki);
+
+        _ally.ChangeStatus(AnimationID.backWalk);
+        yield return _ally.Move(new Vector2(0, 600), 0.6f);
 
         // 自分が攻撃モーション
-        _ally.ChangeStatus(AnimationID.stay);
+        _ally.ChangeStatus(AnimationID.attack);
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.33f);
+
         EffectMaker.instance.Make(
             EffectID.zanngeki,
             new Vector2(_enemy.GetX(), _enemy.GetY()),
             1000,
-            1f,
+            0.01f,
             1
         );
 
+        SE.instance.Play(SEID.swordslash);
+        
         // 相手がやられモーション
-        _enemy.ChangeStatus(AnimationID.stay);
+        _enemy.ChangeStatus(AnimationID.enemyStay);
 
-        yield return new WaitForSeconds(0.3f);
+        int buff = _ally.GetBuff() ? 50 : 0;
+        bool endFlag = _enemy.TakeDamage(
+            (int)(_ally.GetAtk() + buff - _enemy.GetDef())
+        );
+
+        yield return new WaitForSeconds(0.67f);
+
+        if (!endFlag)
+        {
+            _enemy.ChangeStatus(AnimationID.enemyStay);
+        }
 
         // 自分が後ろ歩きモーション
+        _ally.ChangeStatus(AnimationID.frontWalk);
+        yield return _ally.Move(new Vector2(0, -600), 0.6f);
         _ally.ChangeStatus(AnimationID.stay);
-        yield return _ally.Move(new Vector2(0, -700), 0.3f);
-        _ally.ChangeStatus(AnimationID.stay);
+
+        if (callback != null)
+        {
+            callback(
+                endFlag ? "win" : "continue"
+            );
+        }
     }
 
-    public IEnumerator Talk()
+    public IEnumerator Talk(UnityAction<string> callback)
     {
-        _ally.ChangeStatus(AnimationID.walk);
-        yield return _ally.Move(new Vector2(0, 100), 0.2f);
+        _ally.ChangeStatus(AnimationID.backWalk);
+        yield return _ally.Move(new Vector2(0, 200), 0.4f);
+        _ally.ChangeStatus(AnimationID.stay);
+
+        SE.instance.Play(SEID.serihubatou);
 
         // 相手にデバフのエフェクト
         EffectMaker.instance.Make(
@@ -147,57 +175,91 @@ public class Action : MonoBehaviour
 
         // 相手がやられモーション
         _enemy.ChangeStatus(AnimationID.enemyStay);
-        
-        yield return new WaitForSeconds(1f);
-        _enemy.ChangeStatus(AnimationID.enemyStay);
+
+        int buff = _ally.GetBuff() ? 50 : 0;
+        bool endFlag = _enemy.TakeDamage(
+            (int)(_ally.GetAtk() + buff - _enemy.GetDef())
+        );
+
+        yield return new WaitForSeconds(1.2f);
+
+        if (!endFlag)
+        {
+            _enemy.ChangeStatus(AnimationID.enemyStay);
+        }
 
         // 自分が後ろ歩きモーション
-        _ally.ChangeStatus(AnimationID.walk);
-        yield return _ally.Move(new Vector2(0, -100), 0.2f);
+        _ally.ChangeStatus(AnimationID.frontWalk);
+        yield return _ally.Move(new Vector2(0, -200), 0.4f);
         _ally.ChangeStatus(AnimationID.stay);
+
+        if (callback != null)
+        {
+            callback(
+                endFlag ? "win" : "continue"
+            );
+        }
     }
 
-    public IEnumerator Heal()
+    public IEnumerator Heal(UnityAction<string> callback)
     {
-        // 自分に回復エフェクト
-        EffectMaker.instance.Make(
-           EffectID.zanngeki,
-           new Vector2(_ally.GetX(), _ally.GetY()),
-           1000,
-           0.01f,
-           1
-       );
-       yield return new WaitForSeconds(1f);
-    }
+        SE.instance.Play(SEID.kaihuku);
 
-    public IEnumerator Buff()
-    {
         // 自分に回復エフェクト
         EffectMaker.instance.Make(
-           EffectID.zanngeki,
-           new Vector2(_ally.GetX(), _ally.GetY()),
-           1000,
-           0.01f,
-           1
-       );
+            EffectID.zanngeki,
+            new Vector2(_ally.GetX(), _ally.GetY()),
+            1000,
+            0.01f,
+            1
+        );
+        _ally.HealHp();
         yield return new WaitForSeconds(1f);
+
+        if (callback != null)
+        {
+            callback("continue");
+        }
     }
 
-    public void CallEnemy(UnityAction callback)
+    public IEnumerator Buff(UnityAction<string> callback)
     {
-        StartCoroutine(EnemyAttack());
-        if (callback != null) callback();
+        SE.instance.Play(SEID.bahu);
+
+        // 自分にバフエフェクト
+        EffectMaker.instance.Make(
+            EffectID.zanngeki,
+            new Vector2(_ally.GetX(), _ally.GetY()),
+            1000,
+            0.01f,
+            1
+        );
+        _ally.SetBuff();
+        yield return new WaitForSeconds(1f);
+
+        if (callback != null)
+        {
+            callback("continue");
+        }
     }
 
-    public IEnumerator EnemyAttack()
+    public void CallEnemy(UnityAction<string> callback)
     {
+        StartCoroutine(EnemyAttack(callback));
+    }
+
+    public IEnumerator EnemyAttack(UnityAction<string> callback)
+    {    
+        //SE.instance.Play(SEID.tekiserihukougeki);
+
         _enemy.ChangeStatus(AnimationID.enemyWalk);
-        yield return _enemy.Move(new Vector2(0, -700), 0.6f);
+        yield return _enemy.Move(new Vector2(0, -600), 0.6f);
 
         // 相手が攻撃モーション
         _enemy.ChangeStatus(AnimationID.enemyStay);
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.33f);
+
         EffectMaker.instance.Make(
             EffectID.zanngeki,
             new Vector2(_ally.GetX(), _ally.GetY()),
@@ -209,10 +271,28 @@ public class Action : MonoBehaviour
         // 自分がやられモーション
         _ally.ChangeStatus(AnimationID.stay);
 
-        yield return new WaitForSeconds(0.3f);
+        bool endFlag = _ally.TakeDamage(
+            (int)(_enemy.GetAtk() - _ally.GetDef())
+        );
+
+        yield return new WaitForSeconds(0.67f);
+
+        if (!endFlag)
+        {
+            _ally.ChangeStatus(AnimationID.stay);
+        }
+
+        // 相手が前歩きモーション
         _enemy.ChangeStatus(AnimationID.enemyWalk);
-        yield return _enemy.Move(new Vector2(0, 700), 0.3f);
+        yield return _enemy.Move(new Vector2(0, 600), 0.3f);
         _enemy.ChangeStatus(AnimationID.enemyStay);
+
+        if (callback != null)
+        {
+            callback(
+                endFlag ? "lose" : "continue"
+            );
+        }
     }
 
     /// <summary>
