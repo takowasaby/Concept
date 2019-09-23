@@ -16,6 +16,8 @@ public class FrameRepository : MonoBehaviour
         public FramesRoleID framesRoleID;
         public int setIndex;
         public List<FrameID> frames;
+        public string title;
+        public string effect;
     }
 
     [System.Serializable]
@@ -54,6 +56,30 @@ public class FrameRepository : MonoBehaviour
             }
         }
         return new List<FrameID>();
+    }
+
+    public string GetTitle(FramesRoleID framesRoleID, int setIndex)
+    {
+        foreach (CorrectFramesInfo correctFramesInfo in correctFramesList)
+        {
+            if (correctFramesInfo.framesRoleID == framesRoleID && correctFramesInfo.setIndex == setIndex)
+            {
+                return correctFramesInfo.title;
+            }
+        }
+        return null;
+    }
+
+    public string GetEffect(FramesRoleID framesRoleID, int setIndex)
+    {
+        foreach (CorrectFramesInfo correctFramesInfo in correctFramesList)
+        {
+            if (correctFramesInfo.framesRoleID == framesRoleID && correctFramesInfo.setIndex == setIndex)
+            {
+                return correctFramesInfo.effect;
+            }
+        }
+        return null;
     }
 
     public FrameID GetCurrentFramesPart(FramesRoleID framesRoleID, int setIndex, SituationID situation)

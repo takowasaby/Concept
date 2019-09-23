@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 public class SceneController : MonoBehaviour
 {
@@ -51,10 +52,15 @@ public class SceneController : MonoBehaviour
         {
             foreach (PlayerID playerID in System.Enum.GetValues(typeof(PlayerID)))
             {
+                List<FrameID> newFrames = new List<FrameID>();
                 for(int i = 0; i < 3; i++)
                 {
-                    FrameID newFrame = deck.GetFrame((FramesRoleID)i, (SituationID)(((int)playerID - (int)currentPlayerID + 4) % 4));
-                    GlobalHand.SetHand(playerID, i, newFrame);
+                    newFrames.Add(deck.GetFrame((FramesRoleID)i, (SituationID)(((int)playerID - (int)currentPlayerID + 4) % 4)));
+                }
+                newFrames = newFrames.OrderBy(_ => Guid.NewGuid()).ToList();
+                for (int i = 0; i < 3; i++)
+                {
+                    GlobalHand.SetHand(playerID, i, newFrames[i]);
                 }
             }
 

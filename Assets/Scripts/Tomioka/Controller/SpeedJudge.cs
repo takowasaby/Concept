@@ -12,6 +12,7 @@ public class SpeedJudge : MonoBehaviour
     {
         charactersInBattle = characters
             .OrderBy(character => character.GetSpd())
+            .Reverse()
             .ToList();
         currentCharacter = 0;
     }
