@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class FourFramesMaker : MonoBehaviour
 {
     [SerializeField]
+    FrameRepository frameRepository = null;
+
+    [SerializeField]
     FourFrames fourFrames = null;
 
     [SerializeField]
@@ -46,7 +49,7 @@ public class FourFramesMaker : MonoBehaviour
         }
         currentPlayerID = PlayerIDOffset(currentPlayerID, 1);
         displayPlayerID = currentPlayerID;
-        StartCoroutine("WaitTap", "スマホを次の人に渡したあと\nタップしてね");
+        StartCoroutine("WaitTap", frameRepository.GetNGWords(frameID));
     }
 
     private void DisplayHand()
@@ -75,16 +78,31 @@ public class FourFramesMaker : MonoBehaviour
         return (PlayerID)(((int)playerID + offset + 4) % 4);
     }
 
-    private IEnumerator WaitTap(string message)
+    private IEnumerator WaitTap(List<string> ngWords)
     {
         hand.DisableFrames();
 
         waitTapWindow.SetActive(true);
-        waitWindowText.text = message;
+        string ngWordText = "NGワードは\n<size=144><color=#ff0000>";
+        foreach(string word in ngWords)
+        {
+            ngWordText = ngWordText + word + "\n";
+        }
+        ngWordText = ngWordText + "</color></size>気を付けよう！\n";
+        waitWindowText.text = ngWordText;
 
         yield return new WaitForSeconds(0.1f);
 
         while(!Input.GetMouseButtonDown(0))
+        {
+            yield return null;
+        }
+
+        waitWindowText.text = "スマホを次の人に渡したあと\nタップしてね";
+
+        yield return new WaitForSeconds(0.1f);
+
+        while (!Input.GetMouseButtonDown(0))
         {
             yield return null;
         }

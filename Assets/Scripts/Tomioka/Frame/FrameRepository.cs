@@ -5,44 +5,67 @@ using UnityEngine;
 public class FrameRepository : MonoBehaviour
 {
     [SerializeField]
-    List<FrameID> frameIDs = new List<FrameID>();
+    List<CorrectFramesInfo> correctFramesList = new List<CorrectFramesInfo>();
 
     [SerializeField]
-    List<SituationID> situationIDs = new List<SituationID>();
-
-    [SerializeField]
-    List<Sprite> frameViews = new List<Sprite>();
-
-    [SerializeField]
-    List<Sprite> frameHandViews = new List<Sprite>();
-
-    [SerializeField]
-    List<bool> IsObstacleFlags = new List<bool>();
-
     List<FrameInfo> frameInfos = new List<FrameInfo>();
 
+    [System.Serializable]
+    struct CorrectFramesInfo
+    {
+        public FramesRoleID framesRoleID;
+        public int setIndex;
+        public List<FrameID> frames;
+    }
+
+    [System.Serializable]
     struct FrameInfo
     {
         public FrameID frameID;
         public SituationID situationID;
         public Sprite frameView;
-        public Sprite frameHandView;
-        public bool IsObstacle;
+        public List<string> ngWords;
     }
 
-    void Start()
+    public System.Tuple<FramesRoleID, int> CheckFrames(List<FrameID> frames)
     {
-        frameInfos.Clear();
-        for (int i = 0; i < frameIDs.Count && i < situationIDs.Count && i < frameViews.Count && i < IsObstacleFlags.Count && i < frameHandViews.Count; i++)
+        if (frames.Count != 4) return null;
+        foreach (CorrectFramesInfo correctFramesInfo in correctFramesList)
         {
-            FrameInfo frameInfo = new FrameInfo();
-            frameInfo.frameID = frameIDs[i];
-            frameInfo.situationID = situationIDs[i];
-            frameInfo.frameView = frameViews[i];
-            frameInfo.frameHandView = frameHandViews[i];
-            frameInfo.IsObstacle = IsObstacleFlags[i];
-            frameInfos.Add(frameInfo);
+            if (correctFramesInfo.frames[0] == frames[0])
+            {
+                if (correctFramesInfo.frames[1] == frames[1] && correctFramesInfo.frames[2] == frames[2] && correctFramesInfo.frames[3] == frames[3])
+                {
+                    return System.Tuple.Create(correctFramesInfo.framesRoleID, correctFramesInfo.setIndex);
+                }
+                return null;
+            }
         }
+        return null;
+    }
+
+    public List<FrameID> GetCorrectFrames(FramesRoleID framesRoleID, int setIndex)
+    {
+        foreach(CorrectFramesInfo correctFramesInfo in correctFramesList)
+        {
+            if (correctFramesInfo.framesRoleID == framesRoleID && correctFramesInfo.setIndex == setIndex)
+            {
+                return correctFramesInfo.frames;
+            }
+        }
+        return new List<FrameID>();
+    }
+
+    public FrameID GetCurrentFramesPart(FramesRoleID framesRoleID, int setIndex, SituationID situation)
+    {
+        foreach (CorrectFramesInfo correctFramesInfo in correctFramesList)
+        {
+            if (correctFramesInfo.framesRoleID == framesRoleID && correctFramesInfo.setIndex == setIndex)
+            {
+                return correctFramesInfo.frames[(int)situation];
+            }
+        }
+        return FrameID.NullFrame;
     }
 
     public Sprite GetFrameView(FrameID frameID)
@@ -52,18 +75,6 @@ public class FrameRepository : MonoBehaviour
             if (frameInfo.frameID == frameID)
             {
                 return frameInfo.frameView;
-            }
-        }
-        throw new System.Exception("無効なFrameIDが入力されました。");
-    }
-
-    public Sprite GetFrameHandView(FrameID frameID)
-    {
-        foreach (FrameInfo frameInfo in frameInfos)
-        {
-            if (frameInfo.frameID == frameID)
-            {
-                return frameInfo.frameHandView;
             }
         }
         throw new System.Exception("無効なFrameIDが入力されました。");
@@ -81,13 +92,13 @@ public class FrameRepository : MonoBehaviour
         throw new System.Exception("無効なFrameIDが入力されました。");
     }
 
-    public bool GetObstacleFlag(FrameID frameID)
+    public List<string> GetNGWords(FrameID frameID)
     {
         foreach (FrameInfo frameInfo in frameInfos)
         {
             if (frameInfo.frameID == frameID)
             {
-                return frameInfo.IsObstacle;
+                return frameInfo.ngWords;
             }
         }
         throw new System.Exception("無効なFrameIDが入力されました。");

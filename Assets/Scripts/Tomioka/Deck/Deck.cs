@@ -5,69 +5,23 @@ using System.Linq;
 
 public class Deck : MonoBehaviour
 {
-    [SerializeField] float GoForward = 1.0f;
-    [SerializeField] float GoBack = 1.0f;
+    [SerializeField]
+    private FrameRepository frameRepository = null;
 
-    [SerializeField] float AccumulatePower = 1.0f;
+    [SerializeField]
+    private List<int> rotationIndexs;
 
-    [SerializeField] float RaiseSword = 1.0f;
-    [SerializeField] float Chant = 1.0f;
+    private int currentRotation = 0;
 
-    [SerializeField] float CutDown = 1.0f;
-    [SerializeField] float HitMagic = 1.0f;
-
-    public FrameID GetFrame(SituationID situationID)
+    public FrameID GetFrame(FramesRoleID roleID, SituationID situationID)
     {
-        switch(situationID)
-        {
-            case SituationID.Ki:
-                {
-                    List<float> rates = new List<float> { GoForward, GoBack };
-                    switch (RatesToIndex(rates))
-                    {
-                        case 0:
-                            return FrameID.GoForward;
-                        case 1:
-                            return FrameID.GoBack;
-                    }
-                }
-                break;
-            case SituationID.Sho:
-                {
-                    List<float> rates = new List<float> { AccumulatePower };
-                    switch (RatesToIndex(rates))
-                    {
-                        case 0:
-                            return FrameID.AccumulatePower;
-                    }
-                }
-                break;
-            case SituationID.Ten:
-                {
-                    List<float> rates = new List<float> { RaiseSword, Chant };
-                    switch (RatesToIndex(rates))
-                    {
-                        case 0:
-                            return FrameID.RaiseSword;
-                        case 1:
-                            return FrameID.Chant;
-                    }
-                }
-                break;
-            case SituationID.Ketsu:
-                {
-                    List<float> rates = new List<float> { CutDown, HitMagic };
-                    switch (RatesToIndex(rates))
-                    {
-                        case 0:
-                            return FrameID.CutDown;
-                        case 1:
-                            return FrameID.HitMagic;
-                    }
-                }
-                break;
-        }
-        return FrameID.NullFrame;
+        FrameID retID = frameRepository.GetCurrentFramesPart(roleID, rotationIndexs[currentRotation], situationID);
+        return retID;
+    }
+
+    public void Rotation()
+    {
+        currentRotation = (currentRotation + 1) % rotationIndexs.Count;
     }
 
     private int RatesToIndex(IEnumerable<float> rates)

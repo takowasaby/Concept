@@ -53,7 +53,7 @@ public class SceneController : MonoBehaviour
             {
                 for(int i = 0; i < 3; i++)
                 {
-                    FrameID newFrame = FrameID.GoForward;//deck.GetFrame(i);
+                    FrameID newFrame = deck.GetFrame((FramesRoleID)i, (SituationID)(((int)playerID - (int)currentPlayerID + 4) % 4));
                     GlobalHand.SetHand(playerID, i, newFrame);
                 }
             }
@@ -65,6 +65,7 @@ public class SceneController : MonoBehaviour
         {
             enemyFourFramesMaker.InitializeFourFramesMaker(nextActor, OnCompleteFourFrames);
         }
+        deck.Rotation();
     }
 
     public void OnCompleteFourFrames(IEnumerable<FrameID> fourFrames)
