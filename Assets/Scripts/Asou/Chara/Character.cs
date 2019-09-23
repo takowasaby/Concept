@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 /* キャラクターを定義するスーパークラス */
 public class Character : MonoBehaviour
@@ -32,6 +33,45 @@ public class Character : MonoBehaviour
     private float _physicalEnhance;
     private float _swordEnhance;
 
+    /// <summary>
+    /// アニメ関係
+    /// </summary>
+    private class ValueList
+    {
+        public List<Sprite> List = new List<Sprite>();
+
+        public ValueList(List<Sprite> list)
+        {
+            List = list;
+        }
+    }
+
+    private List<ValueList> _imageList = new List<ValueList>();
+
+    private List<string> _headerList = new List<string>
+    {
+        "Animation/stay/stay_",
+        "Animation/walk/back/walk_"
+    };
+
+    private List<int> _maxList = new List<int>
+    {
+        30,
+        30
+    };
+
+    [SerializeField]
+    private float _interval;
+
+    private Image _image;
+
+    private float _passTime;
+    private int _counter;
+    protected AnimationID _status;
+    /// <summary>
+    /// アニメ関係終了
+    /// </summary>
+
     public void Awake()
     {
         _isAlly = true;
@@ -46,11 +86,60 @@ public class Character : MonoBehaviour
         _swordEnhance = 1f;
 
         UpdateHpBar();
+
+        int headerIdx = 0;
+        foreach (string header in _headerList)
+        {
+            List<Sprite> spriteList = new List<Sprite>();
+            for (int i = 1; i <= _maxList[headerIdx]; i++)
+            {
+                string numberString;
+                if (i < 10) numberString = "000" + i;
+                else numberString = "00" + i;
+                spriteList.Add(
+                    (Sprite)Resources.Load<Sprite>(header + numberString)
+                );
+            }
+
+            ValueList vl = new ValueList(spriteList);
+            _imageList.Add(vl);
+
+            headerIdx++;
+        }
+
+        _image = gameObject.GetComponent<Image>();
+        _passTime = 0f;
+        _counter = 0;
+        _status = AnimationID.stay;
+    }
+
+    void Update()
+    {
+        _passTime += Time.deltaTime;
+        if (_passTime >= _interval)
+        {
+            _passTime = 0f;
+
+            _image.sprite = _imageList[(int)_status].List[_counter];
+
+            _counter++;
+            if (_counter == _maxList[(int)_status])
+            {
+                _counter = 0;
+            }
+        }
     }
 
     public void OnValidate()
     {
         PutScreen();
+    }
+
+    public void ChangeStatus(AnimationID status)
+    {
+        _status = status;
+        _counter = 0;
+        _passTime = 0f;
     }
 
     public bool GetIsAlly() { return _isAlly; }
@@ -72,15 +161,6 @@ public class Character : MonoBehaviour
         Vector2 anchorMaxVec = HpBarRTF.anchorMax;
         anchorMaxVec.x = (float)_remainHp / _hp;
         HpBarRTF.anchorMax = anchorMaxVec;
-    }
-
-    // 今は使用していない
-    private int Lerp(int y0, int y1, double ratio)
-    {
-        if (ratio < 0.0) ratio = 0.0;
-        else if (ratio > 1.0) ratio = 1.0;
-
-        return (int)((1.0 - ratio) * y0 + ratio * y1);
     }
 
     private void PutScreen()
