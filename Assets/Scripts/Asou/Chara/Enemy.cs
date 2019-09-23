@@ -26,6 +26,8 @@ public class Enemy : Character
     {
         base.Awake();
         _isAlly = false;
+
+        _status = AnimationID.stay;
     }
 
     public int GetFrameListSize() { return _preset.Count; }
