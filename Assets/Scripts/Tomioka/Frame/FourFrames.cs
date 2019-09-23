@@ -66,6 +66,26 @@ public class FourFrames : MonoBehaviour
         ketsuFrameViews.sprite = frameRepository.GetFrameView(frameIDs[3]);
     }
 
+    public void DisplayOneFrame(int index)
+    {
+        switch(index)
+        {
+            case 0:
+                kiFrameViews.sprite = frameRepository.GetFrameView(frameIDs[0]);
+                break;
+            case 1:
+                shoFrameViews.sprite = frameRepository.GetFrameView(frameIDs[1]);
+                break;
+            case 2:
+                tenFrameViews.sprite = frameRepository.GetFrameView(frameIDs[2]);
+                break;
+            case 3:
+                ketsuFrameViews.sprite = frameRepository.GetFrameView(frameIDs[3]);
+                break;
+
+        }
+    }
+
     public void ResetFrames()
     {
         List<FrameID> frameIDs = new List<FrameID>() { FrameID.NullFrame, FrameID.NullFrame, FrameID.NullFrame, FrameID.NullFrame };

@@ -21,6 +21,12 @@ public class Timer : MonoBehaviour
         SetTime(remainingTime);
     }
 
+    public void TImerStop()
+    {
+        timerRun = false;
+        timerText.gameObject.SetActive(false);
+    }
+
     void Update()
     {
         if (timerRun)
@@ -43,6 +49,6 @@ public class Timer : MonoBehaviour
 
     private void SetTime(System.TimeSpan time)
     {
-        timerText.text = $"<size=160>残り</size>\n{time.Seconds.ToString("D2")}<size=160>\"{Mathf.FloorToInt(time.Milliseconds / 10).ToString("D2")}</size>";
+        timerText.text = $" <size=144>残り</size>{time.Seconds.ToString("D2")}<size=144>\"{Mathf.FloorToInt(time.Milliseconds / 10).ToString("D2")}</size>";
     }
 }
