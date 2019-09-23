@@ -15,11 +15,14 @@ public class Hand : MonoBehaviour
     [SerializeField]
     List<Image> frameImages = new List<Image>();
 
-    System.Action<SituationID> onChoiseButtonCallBack = null;
+    System.Action<int> onChoiseButtonCallBack = null;
 
     public void UpdateFrames(IEnumerable<FrameID> frameIDs)
     {
-        ResetFrames();
+        foreach (var frameImage in frameImages)
+        {
+            frameImage.sprite = null;
+        }
         List<FrameID> idList = frameIDs.ToList();
         for (int i = 0; i < frameImages.Count && i < idList.Count; i++)
         {
@@ -40,7 +43,7 @@ public class Hand : MonoBehaviour
         }
     }
 
-    public void EnableFrames(System.Action<SituationID> onChoiseButtonCallBack)
+    public void EnableFrames(System.Action<int> onChoiseButtonCallBack)
     {
         this.onChoiseButtonCallBack = onChoiseButtonCallBack;
         foreach(var frameButton in frameButtons)
@@ -61,28 +64,18 @@ public class Hand : MonoBehaviour
         }
     }
 
-    public void DisableOneFrames(SituationID situationID)
+    public void OnChoiseFirstFrame()
     {
-        frameButtons[(int)situationID].interactable = false;
+        onChoiseButtonCallBack(0);
     }
 
-    public void OnChoiseKiFrame()
+    public void OnChoiseSecondFrame()
     {
-        onChoiseButtonCallBack(SituationID.Ki);
+        onChoiseButtonCallBack(1);
     }
 
-    public void OnChoiseShoFrame()
+    public void OnChoiseThirdFrame()
     {
-        onChoiseButtonCallBack(SituationID.Sho);
-    }
-
-    public void OnChoiseTenFrame()
-    {
-        onChoiseButtonCallBack(SituationID.Ten);
-    }
-
-    public void OnChoiseKetsuFrame()
-    {
-        onChoiseButtonCallBack(SituationID.Ketsu);
+        onChoiseButtonCallBack(2);
     }
 }

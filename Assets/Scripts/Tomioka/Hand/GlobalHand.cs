@@ -7,7 +7,7 @@ public class GlobalHand
 {
     private static GlobalHand globalHand = new GlobalHand();
 
-    private static Dictionary<PlayerID, Dictionary<SituationID, FrameID>> globalHandIDs = new Dictionary<PlayerID, Dictionary<SituationID, FrameID>>();
+    private static Dictionary<PlayerID, Dictionary<int, FrameID>> globalHandIDs = new Dictionary<PlayerID, Dictionary<int, FrameID>>();
 
     private GlobalHand()
     {
@@ -15,25 +15,25 @@ public class GlobalHand
 
     public static void Reset()
     {
-        globalHandIDs = new Dictionary<PlayerID, Dictionary<SituationID, FrameID>>();
+        globalHandIDs = new Dictionary<PlayerID, Dictionary<int, FrameID>>();
         foreach(PlayerID playerID in System.Enum.GetValues(typeof(PlayerID)))
         {
-            globalHandIDs.Add(playerID, new Dictionary<SituationID, FrameID>());
-            foreach(SituationID situationID in System.Enum.GetValues(typeof(SituationID)))
+            globalHandIDs.Add(playerID, new Dictionary<int, FrameID>());
+            for(int i = 0; i < 3; i++)
             {
-                globalHandIDs[playerID].Add(situationID, FrameID.NullFrame);
+                globalHandIDs[playerID].Add(i, FrameID.NullFrame);
             }
         }
     }
 
-    public static void SetHand(PlayerID playerID, SituationID situationID, FrameID frameID)
+    public static void SetHand(PlayerID playerID, int handIndex, FrameID frameID)
     {
-        globalHandIDs[playerID][situationID] = frameID;
+        globalHandIDs[playerID][handIndex] = frameID;
     }
 
-    public static FrameID GetHand(PlayerID playerID, SituationID situationID)
+    public static FrameID GetHand(PlayerID playerID, int handIndexD)
     {
-        return globalHandIDs[playerID][situationID];
+        return globalHandIDs[playerID][handIndexD];
     }
 
     public static IEnumerable<FrameID> GetHand(PlayerID playerID)

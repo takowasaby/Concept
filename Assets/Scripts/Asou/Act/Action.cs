@@ -6,6 +6,11 @@ using UnityEngine.Events;
 
 public class Action : MonoBehaviour
 {
+    public void Call(Character character, List<FrameID> frameList, UnityAction callback)
+    {
+        StartCoroutine(ActionFrameList(character, frameList, callback));
+    }
+
     public IEnumerator ActionFrameList(Character character, List<FrameID> frameList, UnityAction callback)
     {
         foreach (FrameID frameID in frameList)
@@ -31,7 +36,7 @@ public class Action : MonoBehaviour
 
                     foreach (Character existCharacter in Character.characters)
                     {
-                        if (!existCharacter.GetIsAlly() && Math.Abs(existCharacter.GetY() - character.GetY()) <= 1.5f)
+                        if (character.GetIsAlly() != existCharacter.GetIsAlly() && Math.Abs(existCharacter.GetY() - character.GetY()) <= 1.5f)
                         {
                             int damage = (int)(character.GetAtk() * character.GetPhysicalEnhance() * character.GetSwordEnhance()
                                 - existCharacter.GetDef());
