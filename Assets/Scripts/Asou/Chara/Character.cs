@@ -30,8 +30,6 @@ public class Character : MonoBehaviour
 
     private int _id;
     private int _remainHp;
-    private float _physicalEnhance;
-    private float _swordEnhance;
 
     /// <summary>
     /// アニメ関係
@@ -48,13 +46,13 @@ public class Character : MonoBehaviour
 
     private List<ValueList> _imageList = new List<ValueList>();
 
-    private List<string> _headerList = new List<string>
+    private static List<string> _headerList = new List<string>
     {
         "Animation/stay/stay_",
         "Animation/walk/back/walk_"
     };
 
-    private List<int> _maxList = new List<int>
+    private static List<int> _maxList = new List<int>
     {
         30,
         30
@@ -82,8 +80,6 @@ public class Character : MonoBehaviour
         _id = characters.Count;
         characters.Add(this);
         _remainHp = _hp;
-        _physicalEnhance = 1f;
-        _swordEnhance = 1f;
 
         UpdateHpBar();
 
@@ -115,6 +111,7 @@ public class Character : MonoBehaviour
 
     void Update()
     {
+        // 常に稼働しているアニメーション
         _passTime += Time.deltaTime;
         if (_passTime >= _interval)
         {
@@ -128,11 +125,29 @@ public class Character : MonoBehaviour
                 _counter = 0;
             }
         }
+
+        if (_isAlly && Input.GetMouseButtonDown(2))
+        {
+            StartCoroutine(TestMove());
+        }
     }
 
-    public void OnValidate()
+    void OnValidate()
     {
-        PutScreen();
+        Vector2 pos = transform.localPosition;
+        pos.x = _x;
+        pos.y = _y;
+        transform.localPosition = pos;
+    }
+
+    // テスト用
+    private IEnumerator TestMove()
+    {
+        ChangeStatus(AnimationID.walk);
+        yield return Move(new Vector2(0, 800), 0.6f);
+        ChangeStatus(AnimationID.stay);
+        yield return new WaitForSeconds(0.3f);
+        yield return Move(new Vector2(0, -800), 0.3f);
     }
 
     public void ChangeStatus(AnimationID status)
@@ -148,13 +163,8 @@ public class Character : MonoBehaviour
     public int GetDef() { return _def; }
     public int GetX() { return _x; }
     public float GetY() { return _y; }
-    public int GetSpd() {
-        // ランダムで変化させる (優先度は低い)
-        return _spd;
-    }
+    public int GetSpd() { return _spd; }
     public int GetRemainHp() { return _remainHp; }
-    public float GetPhysicalEnhance() { return _physicalEnhance; }
-    public float GetSwordEnhance() { return _swordEnhance; }
 
     private void UpdateHpBar()
     {
@@ -163,15 +173,7 @@ public class Character : MonoBehaviour
         HpBarRTF.anchorMax = anchorMaxVec;
     }
 
-    private void PutScreen()
-    {
-        Vector2 pos = transform.localPosition;
-        pos.x = 200 + _x * 150;
-        pos.y = 200 + _y * 350;
-        transform.localPosition = pos;
-    }
-
-    public void TakeDamage(int damage)
+    public bool TakeDamage(int damage)
     {
         _remainHp -= damage;
         Debug.Log(damage + "ダメージ");
@@ -179,65 +181,32 @@ public class Character : MonoBehaviour
         if (_remainHp < 0)
         {
             _remainHp = 0;
-            characters.Remove(this);
-            Destroy(gameObject);
         }
 
         UpdateHpBar();
+
+        // 死んだらTrue
+        if (_remainHp == 0) return true;
+        return false;
     }
 
-    public void Reset()
+    public IEnumerator Move(Vector2 dist, float time)
     {
-        _physicalEnhance = 1f;
-        _swordEnhance = 1f;
-    }
+        Vector2 startPos = transform.localPosition;
+        float passTime = 0f;
 
-    public IEnumerator Move(bool forward)
-    {
-        float nextY;
-        if (forward)
+        while (passTime < time)
         {
-            Debug.Log("前進");
-            nextY = _y + 1;
-            while (_y < nextY)
-            {
-                _y += 0.01f;
-                PutScreen();
-                yield return null;
-            }
+            passTime += Time.deltaTime;
+            transform.localPosition = new Vector2(
+                startPos.x + dist.x * passTime / time,
+                startPos.y + dist.y * passTime / time
+            );
+            yield return null;
         }
-        else
-        {
-            Debug.Log("後退");
-            nextY = _y - 1;
-            while(_y > nextY)
-            {
-                _y -= 0.01f;
-                PutScreen();
-                yield return null;
-            }
-        }
-        _y = nextY;
-        PutScreen();
-    }
-
-    public IEnumerator AccumulatePower()
-    {
-        Debug.Log("物理攻撃力アップ");
-        _physicalEnhance = 1.5f;
-        yield return new WaitForSeconds(1f);
-    }
-  
-    public IEnumerator RaiseSword()
-    {
-        Debug.Log("剣攻撃力アップ");
-        _swordEnhance = 1.5f;
-        yield return new WaitForSeconds(1f);
-    }
-
-    public IEnumerator CutDown()
-    {
-        Debug.Log("剣で攻撃");
-        yield return new WaitForSeconds(1f);
+        transform.localPosition = new Vector2(
+            startPos.x + dist.x,
+            startPos.y + dist.y
+        );
     }
 }

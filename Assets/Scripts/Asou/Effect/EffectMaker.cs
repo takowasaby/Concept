@@ -5,6 +5,9 @@ using UnityEngine;
 public class EffectMaker : MonoBehaviour
 {
     [SerializeField]
+    public static EffectMaker instance;
+
+    [SerializeField]
     private GameObject _parentGameObject = null;
     
     private class ValueList
@@ -30,6 +33,8 @@ public class EffectMaker : MonoBehaviour
 
     void Awake()
     {
+        instance = this;
+
         List<string> headerList = new List<string>
         {
             "Effect/zanngeki/kirisaki."
@@ -71,6 +76,8 @@ public class EffectMaker : MonoBehaviour
         effectScript.SetImageList(imageList);
         effectScript.SetMax(imageList.Count);
         effectScript.SetLoop(loop);
+
+        Debug.Log(pos);
 
         effect.transform.SetParent(_parentGameObject.transform);
     }
