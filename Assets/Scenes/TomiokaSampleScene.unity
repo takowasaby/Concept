@@ -141,6 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07b897285da5f914d9bb0623b6e1ad33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  frameRepository: {fileID: 869598161}
   fourFrames: {fileID: 1229946801}
   hand: {fileID: 282516214}
   waitTapWindow: {fileID: 522796953}
@@ -687,21 +688,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d326618f28d6341abedfd8cf49e139, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frameIDs: 0100000003000000050000000700000002000000
-  situationIDs: 0000000001000000020000000300000000000000
-  frameViews:
-  - {fileID: 21300000, guid: 2ce0a6d841fea5b4abe777cfa1b24f95, type: 3}
-  - {fileID: 21300000, guid: b01b582f2e56dac43930ddeda40733aa, type: 3}
-  - {fileID: 21300000, guid: ca37d450aaf141f4ca45e2c24d45e170, type: 3}
-  - {fileID: 21300000, guid: dea0f014461da1d41905dd9e5e13bdda, type: 3}
-  - {fileID: 21300000, guid: 5ef1f3da92a479446b42c361d29ecd50, type: 3}
-  frameHandViews:
-  - {fileID: 21300000, guid: d0f1375936e87bb4589f45ac683b2479, type: 3}
-  - {fileID: 21300000, guid: d33301f2d1cf9874891a4e5c8cebb124, type: 3}
-  - {fileID: 21300000, guid: 59afb1911897fca40afe5a9264d910cc, type: 3}
-  - {fileID: 21300000, guid: 80878f8f4b30c8a469749c120ecdaf57, type: 3}
-  - {fileID: 21300000, guid: 9da95bfe1782cd34da103aa99020e4a0, type: 3}
-  IsObstacleFlags: 0000000000
+  correctFramesList:
+  - framesRoleID: 0
+    setIndex: 0
+    frames: 01000000010000000100000001000000
+  - framesRoleID: 1
+    setIndex: 0
+    frames: 02000000020000000200000002000000
+  - framesRoleID: 2
+    setIndex: 0
+    frames: 03000000030000000300000003000000
+  frameInfos:
+  - frameID: 1
+    situationID: 0
+    frameView: {fileID: 21300000, guid: 2ce0a6d841fea5b4abe777cfa1b24f95, type: 3}
+    ngWords:
+    - "\u9032\u3080"
+  - frameID: 2
+    situationID: 0
+    frameView: {fileID: 21300000, guid: 5ef1f3da92a479446b42c361d29ecd50, type: 3}
+    ngWords:
+    - "\u623B\u308B"
+  - frameID: 3
+    situationID: 1
+    frameView: {fileID: 21300000, guid: b01b582f2e56dac43930ddeda40733aa, type: 3}
+    ngWords:
+    - "\u529B"
+  - frameID: 5
+    situationID: 2
+    frameView: {fileID: 21300000, guid: ca37d450aaf141f4ca45e2c24d45e170, type: 3}
+    ngWords:
+    - "\u5263"
+  - frameID: 7
+    situationID: 3
+    frameView: {fileID: 21300000, guid: dea0f014461da1d41905dd9e5e13bdda, type: 3}
+    ngWords:
+    - "\u5263"
 --- !u!4 &869598162
 Transform:
   m_ObjectHideFlags: 0
@@ -2182,13 +2204,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ff940ec70a8ca1449f87d8d81ba5228, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GoForward: 1
-  GoBack: 1
-  AccumulatePower: 1
-  RaiseSword: 1
-  Chant: 0
-  CutDown: 1
-  HitMagic: 0
+  frameRepository: {fileID: 869598161}
+  rotationIndexs: 00000000
 --- !u!4 &1896493344
 Transform:
   m_ObjectHideFlags: 0
@@ -2238,7 +2255,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1000, y: 500}
+  m_SizeDelta: {x: 1400, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1961792843
 MonoBehaviour:
@@ -2259,18 +2276,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 84
+    m_Font: {fileID: 12800000, guid: 2328d69b8a1415946a804857bcdc597b, type: 3}
+    m_FontSize: 100
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
     m_MaxSize: 144
     m_Alignment: 1
     m_AlignByGeometry: 0
-    m_RichText: 0
+    m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 1
+    m_LineSpacing: 1.25
   m_Text: New Text
 --- !u!222 &1961792844
 CanvasRenderer:
