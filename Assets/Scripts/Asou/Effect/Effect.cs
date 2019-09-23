@@ -23,8 +23,7 @@ public class Effect : MonoBehaviour
     }
     public void SetSize(int size)
     {
-        RectTransform rtf = transform.GetComponent<RectTransform>();
-        rtf.sizeDelta = new Vector2(size, size);
+        transform.GetComponent<RectTransform>().sizeDelta = new Vector2(size, size);
     }
 
     public void SetImageList(List<Sprite> imageList) { _imageList = imageList; }
