@@ -4,6 +4,8 @@
     backWalk, // 背を向けて歩く
     frontWalk, // 顔を向けて歩く
     attack, // 攻撃
+    yorokobi, // 喜ぶ
     enemyStay,
-    enemyWalk
+    enemyAttack,
+    enemyDame
 }

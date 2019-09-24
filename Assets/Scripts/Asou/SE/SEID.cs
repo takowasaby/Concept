@@ -6,6 +6,5 @@
     serihukougeki,
     serihuseikou,
     serihusippai,
-    swordslash,
-    tekiserihukougeki
+    swordslash
 }

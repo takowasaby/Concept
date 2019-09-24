@@ -59,7 +59,11 @@ public class Character : MonoBehaviour
         "Animation/stay/stay_00",
         "Animation/walk/back/walk_00",
         "Animation/walk/front/walk_00",
-        "Animation/attack/attack_"
+        "Animation/attack/attack_",
+        "Animation/yorokobi/yorokobi_",
+        "Animation/enemyStay/stay_",
+        "Animation/enemyAttack/kougeki_",
+        "Animation/enemyDame/dame_",
     };
 
     private static List<int> _maxList = new List<int>
@@ -67,7 +71,11 @@ public class Character : MonoBehaviour
         30,
         30,
         30,
-        30
+        30,
+        30,
+        29,
+        29,
+        29
     };
 
     [SerializeField]
