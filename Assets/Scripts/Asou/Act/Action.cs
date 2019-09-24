@@ -129,14 +129,14 @@ public class Action : MonoBehaviour
         SE.instance.Play(SEID.swordslash);
         
         // 相手がやられモーション
-        _enemy.ChangeStatus(AnimationID.enemyStay);
+        _enemy.ChangeStatus(AnimationID.enemyDame);
 
         int buff = _ally.GetBuff() ? 50 : 0;
         bool endFlag = _enemy.TakeDamage(
             (int)(_ally.GetAtk() + buff - _enemy.GetDef())
         );
 
-        yield return new WaitForSeconds(0.67f);
+        yield return new WaitForSeconds(0.8f);
 
         if (!endFlag)
         {
@@ -174,14 +174,14 @@ public class Action : MonoBehaviour
         );
 
         // 相手がやられモーション
-        _enemy.ChangeStatus(AnimationID.enemyStay);
+        _enemy.ChangeStatus(AnimationID.enemyDame);
 
         int buff = _ally.GetBuff() ? 50 : 0;
         bool endFlag = _enemy.TakeDamage(
             (int)(_ally.GetAtk() + buff - _enemy.GetDef())
         );
 
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(0.8f);
 
         if (!endFlag)
         {
@@ -205,6 +205,8 @@ public class Action : MonoBehaviour
     {
         SE.instance.Play(SEID.kaihuku);
 
+        _ally.ChangeStatus(AnimationID.yorokobi);
+
         // 自分に回復エフェクト
         EffectMaker.instance.Make(
             EffectID.zanngeki,
@@ -216,6 +218,8 @@ public class Action : MonoBehaviour
         _ally.HealHp();
         yield return new WaitForSeconds(1f);
 
+        _ally.ChangeStatus(AnimationID.stay);
+
         if (callback != null)
         {
             callback("continue");
@@ -225,6 +229,8 @@ public class Action : MonoBehaviour
     public IEnumerator Buff(UnityAction<string> callback)
     {
         SE.instance.Play(SEID.bahu);
+
+        _ally.ChangeStatus(AnimationID.yorokobi);
 
         // 自分にバフエフェクト
         EffectMaker.instance.Make(
@@ -236,6 +242,8 @@ public class Action : MonoBehaviour
         );
         _ally.SetBuff();
         yield return new WaitForSeconds(1f);
+
+        _ally.ChangeStatus(AnimationID.stay);
 
         if (callback != null)
         {
@@ -249,17 +257,16 @@ public class Action : MonoBehaviour
     }
 
     public IEnumerator EnemyAttack(UnityAction<string> callback)
-    {    
-        //SE.instance.Play(SEID.tekiserihukougeki);
-
-        _enemy.ChangeStatus(AnimationID.enemyWalk);
+    {   
+        _enemy.ChangeStatus(AnimationID.enemyStay);
         yield return _enemy.Move(new Vector2(0, -600), 0.6f);
 
         // 相手が攻撃モーション
-        _enemy.ChangeStatus(AnimationID.enemyStay);
+        _enemy.ChangeStatus(AnimationID.enemyAttack);
 
         yield return new WaitForSeconds(0.33f);
-
+        
+        /*
         EffectMaker.instance.Make(
             EffectID.zanngeki,
             new Vector2(_ally.GetX(), _ally.GetY()),
@@ -267,12 +274,16 @@ public class Action : MonoBehaviour
             0.01f,
             1
         );
+        */
+
+        SE.instance.Play(SEID.swordslash);
 
         // 自分がやられモーション
         _ally.ChangeStatus(AnimationID.stay);
 
+        int buff = _ally.GetBuff() ? 30 : 0;
         bool endFlag = _ally.TakeDamage(
-            (int)(_enemy.GetAtk() - _ally.GetDef())
+            (int)(_enemy.GetAtk() - _ally.GetDef() - buff)
         );
 
         yield return new WaitForSeconds(0.67f);
@@ -283,7 +294,7 @@ public class Action : MonoBehaviour
         }
 
         // 相手が前歩きモーション
-        _enemy.ChangeStatus(AnimationID.enemyWalk);
+        _enemy.ChangeStatus(AnimationID.enemyStay);
         yield return _enemy.Move(new Vector2(0, 600), 0.3f);
         _enemy.ChangeStatus(AnimationID.enemyStay);
 
